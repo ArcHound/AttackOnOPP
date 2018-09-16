@@ -11,6 +11,7 @@
     :license: Creative Commons CC0 1.0
 */
 #include <stdio.h>
+#include <time.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -38,7 +39,7 @@ int attackPoC(
 		const unsigned char *k)
 {
     unsigned i;
-	int success = 0;
+	int success = -1;
 
 	/* initialize variables holding plaintext and forgery */
     unsigned char m[TWO_AND_BYTE];
@@ -70,7 +71,7 @@ int attackPoC(
 		
 		/* test forgery */
     	if( 0 == crypto_aead_decrypt(m, &mlen, h, hlen, f, flen, n, k) ) {
-			success = 1;
+			success = i;
 			break;
 		}
 	}
@@ -79,16 +80,19 @@ int attackPoC(
 
 int main()
 {
+    int missing_byte;
 	/* choose nonce, key, header randomly */
 	unsigned i;
     unsigned char h[TWO_AND_BYTE];
     unsigned char k[32];
     unsigned char n[16];
-    for(i = 0; i < sizeof h; ++i) h[i] = 255 & (i*193 + 123);
-    for(i = 0; i < sizeof k; ++i) k[i] = 255 & (i*191 + 123);
-    for(i = 0; i < sizeof n; ++i) n[i] = 255 & (i*181 + 123);
-	
-	if (attackPoC(h, sizeof h, n, k)) printf("Got 'em!\n");
+    srand(time(NULL));
+    for(i = 0; i < sizeof h; ++i) h[i] = rand() % 256;
+    for(i = 0; i < sizeof k; ++i) k[i] = rand() % 256;
+    for(i = 0; i < sizeof n; ++i) n[i] = rand() % 256;
+
+	missing_byte = attackPoC(h, sizeof h, n, k);
+	if (missing_byte != -1) printf("Got 'em! - byte %02x\n", missing_byte);
 	else printf("Invalid forgery :(\n");
 
 	return 0;
