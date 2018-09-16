@@ -1,4 +1,4 @@
-#An Attack on Offset Public Permutation Mode
+# An Attack on Offset Public Permutation Mode
 
 Offset Public Permutation Mode ([OPP](https://eprint.iacr.org/2015/999.pdf)) by Granger et al. is a one-pass authenticated encryption scheme supporting associated data (AEAD scheme). 
 Leveraging an error in analysis of the scheme, a chosen plaintext attack that creates a forgery was discovered. 
